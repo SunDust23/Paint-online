@@ -13,7 +13,7 @@ export default class Rect extends Tool {
     }
 
     mouseUpHandler(e) {
-        this.mouseDown = false
+        this.mouseDown = false;
         this.socket.send(JSON.stringify({
             method: "draw",
             id: this.id,
@@ -23,7 +23,9 @@ export default class Rect extends Tool {
                 y: this.startY,
                 width: this.width,
                 height: this.height, 
-                color: this.ctx.fillStyle
+                color: this.ctx.fillStyle,
+                strokeColor: this.ctx.strokeStyle,
+                strokeWidth: this.ctx.lineWidth
             }
         }))
     }
@@ -57,7 +59,9 @@ export default class Rect extends Tool {
 
     }
 
-    static staticDraw(ctx, x, y, w, h, color) {
+    static staticDraw(ctx, x, y, w, h, color, strokeColor, strokeWidth) {
+        ctx.lineWidth = strokeWidth;
+        ctx.strokeStyle = strokeColor;
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.rect(x, y, w, h);

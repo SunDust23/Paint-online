@@ -6,6 +6,9 @@ import CanvasState from "../store/canvasState";
 import ToolState from "../store/toolState"
 import Brush from "../tools/Brush";
 import Rect from "../tools/Rect";
+import Circle from "../tools/Circle";
+import Line from "../tools/Line";
+import Eraser from "../tools/Eraser";
 import canvasState from "../store/canvasState";
 import { Modal, Button } from "react-bootstrap";
 import axios from 'axios';
@@ -45,7 +48,7 @@ const Canvas = observer(() => {
                 }))
             }
             socket.onmessage = (event) => {
-                let msg = JSON.parse(event.data);
+                let msg = JSON.parse(`${event.data}`);
                 switch (msg.method) {
                     case "connection":
                         console.log(`Пользователь ${msg.username} присоединился`);
@@ -63,10 +66,20 @@ const Canvas = observer(() => {
         const ctx = canvasRef.current.getContext('2d');
         switch (figure.type) {
             case "brush":
-                Brush.draw(ctx, figure.x, figure.y);
+                Brush.staticDraw(ctx, figure.x, figure.y, figure.color, figure.width);
                 break;
             case "rect":
-                Rect.staticDraw(ctx, figure.x, figure.y, figure.width, figure.height, figure.color);
+                Rect.staticDraw(ctx, figure.x, figure.y, figure.width, figure.height, figure.color, figure.strokeColor, figure.strokeWidth);
+                break;
+            case "circle":
+                Circle.staticDraw(ctx, figure.x, figure.y, figure.radius, figure.color, figure.strokeColor, figure.strokeWidth);
+                break;
+
+            case "line":
+                Line.staticDraw(ctx, figure.startX, figure.startY, figure.x, figure.y, figure.color, figure.width);
+                break;
+            case "eraser":
+                Eraser.staticDraw(ctx, figure.x, figure.y, figure.width);
                 break;
             case "finish":
                 ctx.beginPath();
@@ -95,7 +108,7 @@ const Canvas = observer(() => {
                     <Modal.Title>Введите ваше имя:</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <input type="text" ref={usernameRef} class="form-control" placeholder="Имя пользователя" />
+                    <input type="text" ref={usernameRef} className="form-control" placeholder="Имя пользователя" />
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="primary" onClick={() => connectHandler()}>
