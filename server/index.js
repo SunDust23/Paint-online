@@ -18,7 +18,7 @@ app.ws('/', (ws, req)=>{
                 }
             case "draw":
                 {
-                    connectionHandler(ws, msg)
+                    broadcastConnection(ws, msg)
                     break;
                 }
         }
