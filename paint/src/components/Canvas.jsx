@@ -8,6 +8,7 @@ import Brush from "../tools/Brush";
 import Rect from "../tools/Rect";
 import canvasState from "../store/canvasState";
 import { Modal, Button } from "react-bootstrap";
+import axios from 'axios';
 
 const Canvas = observer(() => {
     const canvasRef = useRef();
@@ -17,6 +18,16 @@ const Canvas = observer(() => {
 
     useEffect(() => {
         CanvasState.setCanvas(canvasRef.current);
+        let ctx = canvasRef.current.getContext('2d')
+        axios.get(`http://localhost:5000/image?id=${params.id}`)
+            .then(response => {
+                const img = new Image();
+                img.src = response.data;
+                img.onload = () => {
+                    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+                    ctx.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height);
+                }
+            })
     }, [])
 
     useEffect(() => {
@@ -54,9 +65,9 @@ const Canvas = observer(() => {
             case "brush":
                 Brush.draw(ctx, figure.x, figure.y);
                 break;
-                case "rect":
-                    Rect.staticDraw(ctx, figure.x, figure.y, figure.width, figure.height, figure.color);
-                    break;
+            case "rect":
+                Rect.staticDraw(ctx, figure.x, figure.y, figure.width, figure.height, figure.color);
+                break;
             case "finish":
                 ctx.beginPath();
                 break;
@@ -64,7 +75,12 @@ const Canvas = observer(() => {
     }
 
     const mouseDownHandler = () => {
-        canvasState.pushToUndo(canvasRef.current.toDataURL())
+        canvasState.pushToUndo(canvasRef.current.toDataURL());
+    }
+
+    const mouseUpHandler = () => {
+        axios.post(`http://localhost:5000/image?id=${params.id}`, { img: canvasRef.current.toDataURL() })
+            .then(response => console.log(response.data));
     }
 
     const connectHandler = () => {
@@ -87,7 +103,7 @@ const Canvas = observer(() => {
                     </Button>
                 </Modal.Footer>
             </Modal>
-            <canvas onMouseDown={() => mouseDownHandler()} ref={canvasRef} width={1200} height={600} />
+            <canvas onMouseDown={() => mouseDownHandler()} onMouseUp={() => mouseUpHandler()} ref={canvasRef} width={1200} height={600} />
         </div>
     );
 });
