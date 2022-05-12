@@ -7,16 +7,16 @@ class ToolState {
     }
 
     setTool(tool) {
-        this.tool = tool
+        this.tool = tool;
     }
     setFillColor(color) {
-        this.tool.fillColor = color
+        this.tool.fillColor = color;
     }
     setStrokeColor(color) {
-        this.tool.strokeColor = color
+        this.tool.strokeColor = color;
     }
     setLineWidth(width) {
-        this.tool.lineWidth = width
+        this.tool.lineWidth = width;
     }
 }
 
