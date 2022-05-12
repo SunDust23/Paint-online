@@ -1,16 +1,17 @@
 import React from "react";
-import Settingbar from "./components/Settingbar";
-import Toolbar from "./components/Toolbar";
-import Canvas from "./components/Canvas";
+import Paint from "./pages/Paint";
 import "./styles/app.scss";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 function App() {
   return (
-    <div className="app">
-    <Toolbar/>
-    <Settingbar/>
-    <Canvas/>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/:id" element={<Paint />}/>
+        <Route path="*" element={<Navigate to={`f${(+new Date).toString(16)}`} />}/>
+      </Routes>
+
+    </BrowserRouter>
   );
 }
 
