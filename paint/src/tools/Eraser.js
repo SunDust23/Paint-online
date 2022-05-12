@@ -5,9 +5,14 @@ export default class Eraser extends Brush {
         super(canvas);
     }
 
+    mouseUpHandler(e) {
+        this.ctx.globalCompositeOperation = "source-over";
+        this.mouseDown = false
+    }
+
     draw(x, y) {
-        this.ctx.strokeStyle = "white"
-        this.ctx.lineTo(x, y)
-        this.ctx.stroke()
+        this.ctx.globalCompositeOperation = 'destination-out';
+        this.ctx.lineTo(x, y);
+        this.ctx.stroke();
     }
 }
